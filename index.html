@@ -72,7 +72,7 @@
 <h1>Whose eyes are these?</h1>
 <p>The Adult Nutism Disorder Test consists of 36 photographs, each giving you four choices.</p>
 <p>For each set of eyes, choose which nu metal icon you think they belong to.</p>
-<button id="start-btn" onclick="startQuiz()">Are you ready?</button>
+<button id="start-btn" onclick="startQuiz()" disabled>Are you ready?</button>
 <p id="progress"></p>
 
 <img id="quiz-image" src="" style="display:none;">
@@ -178,14 +178,24 @@ function showFinalScore() {
     '<button onclick="location.reload()">Play Again</button>';
 }
 
+let data = [];
+let questions = [];
+
 async function loadData() {
+  console.log("Loading data...");
+
   const res = await fetch(SHEET_URL);
   data = await res.json();
 
+  console.log("Data received:", data);
+
   questions = shuffle([...data]);
 
-  console.log("Loaded questions:", questions.length); // debug
+  document.getElementById("start-btn").disabled = false;
+  document.getElementById("start-btn").textContent = "Start Quiz";
 }
+
+loadData();
 </script>
 
 </body>
