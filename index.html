@@ -1,18 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Eye Quiz 👀</title>
   <style>
-    body { font-family: Arial; text-align: center; }
-    img { max-width: 300px; margin: 20px; }
-    .answers button {
-      display: block;
-      margin: 10px auto;
-      padding: 10px;
-      width: 200px;
-    }
-  </style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  #quiz-image {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    margin: 20px auto;
+    display: block;
+    border-radius: 12px;
+  }
+
+  .answers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .answers button {
+    padding: 14px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: none;
+    background: #f0f0f0;
+    cursor: pointer;
+  }
+
+  .answers button:active {
+    background: #ddd;
+  }
+
+  #start-btn {
+    padding: 14px 20px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: none;
+    background: black;
+    color: white;
+    cursor: pointer;
+  }
+
+  #progress {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  #result {
+    margin-top: 20px;
+    font-size: 1.2rem;
+  }
+</style>
 </head>
 <body>
 
