@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Eye Quiz 👀</title>
+  <style>
+    body { font-family: Arial; text-align: center; }
+    img { max-width: 300px; margin: 20px; }
+    .answers button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Whose Eyes Are These?</h1>
+
+<img id="quiz-image" src="" alt="Eyes">
+
+<div class="answers" id="answers"></div>
+
+<p id="result"></p>
+
+<button onclick="nextQuestion()">Next Question</button>
+
+<script>
+const SHEET_URL = "https://opensheet.elk.sh/YOUR_SHEET_ID/Sheet1";
+
+let data = [];
+let currentCorrect = null;
+
+async function loadData() {
+  const res = await fetch(SHEET_URL);
+  data = await res.json();
+  nextQuestion();
+}
+
+function randomItem(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function shuffle(arr) {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+function getWrongAnswers(correct) {
+  // Filter out same band + correct person
+  let pool = data.filter(p => 
+    p.Name !== correct.Name && 
+    p.Band !== correct.Band
+  );
+
+  // Shuffle and pick 3
+  return shuffle(pool).slice(0, 3);
+}
+
+function nextQuestion() {
+  document.getElementById("result").textContent = "";
+
+  const correct = randomItem(data);
+  currentCorrect = correct;
+
+  const wrongAnswers = getWrongAnswers(correct);
+
+  const options = shuffle([correct, ...wrongAnswers]);
+
+  // Set image
+  document.getElementById("quiz-image").src = correct["Image URL"];
+
+  // Render answers
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+
+  options.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option.Name;
+
+    btn.onclick = () => {
+      if (option.Name === currentCorrect.Name) {
+        document.getElementById("result").textContent = "✅ Correct!";
+      } else {
+        document.getElementById("result").textContent =
+          "❌ Wrong! It was " + currentCorrect.Name;
+      }
+    };
+
+    answersDiv.appendChild(btn);
+  });
+}
+
+loadData();
+</script>
+
+</body>
+</html>
