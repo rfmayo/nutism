@@ -30,16 +30,19 @@
 const SHEET_URL = "https://opensheet.elk.sh/1t5DHEy-rbKRCe_dDvsmU0m-N5V2UwWMp5Heuf72xlfA/Sheet1";
 
 let data = [];
+let questions = [];
+let currentIndex = 0;
+let score = 0;
 let currentCorrect = null;
 
 async function loadData() {
   const res = await fetch(SHEET_URL);
   data = await res.json();
-  nextQuestion();
-}
 
-function randomItem(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+  // Shuffle once → ensures no repeats
+  questions = shuffle([...data]);
+
+  nextQuestion();
 }
 
 function shuffle(arr) {
@@ -47,30 +50,29 @@ function shuffle(arr) {
 }
 
 function getWrongAnswers(correct) {
-  // Filter out same band + correct person
-  let pool = data.filter(p => 
-    p.Name !== correct.Name && 
+  let pool = data.filter(p =>
+    p.Name !== correct.Name &&
     p.Band !== correct.Band
   );
 
-  // Shuffle and pick 3
   return shuffle(pool).slice(0, 3);
 }
 
 function nextQuestion() {
-  document.getElementById("result").textContent = "";
+  // End of quiz
+  if (currentIndex >= questions.length) {
+    showFinalScore();
+    return;
+  }
 
-  const correct = randomItem(data);
+  const correct = questions[currentIndex];
   currentCorrect = correct;
 
   const wrongAnswers = getWrongAnswers(correct);
-
   const options = shuffle([correct, ...wrongAnswers]);
 
-  // Set image
   document.getElementById("quiz-image").src = correct["Image URL"];
 
-  // Render answers
   const answersDiv = document.getElementById("answers");
   answersDiv.innerHTML = "";
 
@@ -79,16 +81,25 @@ function nextQuestion() {
     btn.textContent = option.Name;
 
     btn.onclick = () => {
+      // Update score silently
       if (option.Name === currentCorrect.Name) {
-        document.getElementById("result").textContent = "✅ Correct!";
-      } else {
-        document.getElementById("result").textContent =
-          "❌ Wrong! It was " + currentCorrect.Name;
+        score++;
       }
+
+      currentIndex++;
+      nextQuestion();
     };
 
     answersDiv.appendChild(btn);
   });
+}
+
+function showFinalScore() {
+  document.getElementById("quiz-image").style.display = "none";
+  document.getElementById("answers").innerHTML = "";
+  
+  document.getElementById("result").textContent =
+    `You scored ${score} out of ${questions.length}! 🎉`;
 }
 
 loadData();
