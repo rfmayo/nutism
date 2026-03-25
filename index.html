@@ -93,6 +93,11 @@ let score = 0;
 let currentCorrect = null;
 
 function startQuiz() {
+  if (questions.length === 0) {
+    alert("Data still loading, try again in a second!");
+    return;
+  }
+
   document.getElementById("start-btn").style.display = "none";
   document.getElementById("quiz-image").style.display = "block";
 
@@ -173,7 +178,14 @@ function showFinalScore() {
     '<button onclick="location.reload()">Play Again</button>';
 }
 
-loadData();
+async function loadData() {
+  const res = await fetch(SHEET_URL);
+  data = await res.json();
+
+  questions = shuffle([...data]);
+
+  console.log("Loaded questions:", questions.length); // debug
+}
 </script>
 
 </body>
